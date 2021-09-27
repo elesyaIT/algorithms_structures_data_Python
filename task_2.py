@@ -1,26 +1,46 @@
 """
-1. На улице встретились N друзей. Каждый пожал руку всем
-остальным друзьям (по одному разу). Сколько рукопожатий было?
-Примечание. Решите задачу при помощи построения графа.
+2. Доработать алгоритм Дейкстры (рассматривался на уроке), чтобы он дополнительно возвращал список вершин, которые необходимо обойти.
 """
+from unittest import result
+
+def dijkstra(graph, start):
+    length=len(graph)
+    is_visited = [False]*length
+    cost=[float('inf')]*length
+    parent=[-1]*length
+
+    cost[start]=0
+    min_cost=0
+
+    while min_cost<float('inf'):
+        is_visited[start]=True
+
+        for i, vertex in enumerate(graph[start]):
+            if vertex != 0 and not is_visited[i]:
+
+                if cost[i]>vertex+cost[start]:
+                    cost[i]=vertex+cost[start]
+                    parent[i]=start
 
 
-s = int(input("Введите количество друзей жмущих руку друг другу: "))
+        min_cost = float('inf')
+        for i in range(length):
+            if min_cost > cost[i] and not is_visited[i]:
+                    min_cost = cost[i]
+                    start=i
 
-# строим матрицу смежности для ориентированного графа.
-# главная диагональ нулевая (мы не можем жать руку сами себе)
-graph = []
-for i in range(s):
-    row = [1] * s
-    row[i] = 0
-    graph.append(row)
+    result = [[] for _ in range(length)]
+    for i in range (length):
+        if is_visited[i]:
+            result[i].append(i)
+            j=1
+            while parent[j] != -1:
+                result[i].append(parent[j])
+                j=parent[j]
+            result[i].reverse()
+    return cost,result
 
-print(graph)
-
-# считаем количество рукопожатий (количество ребер)
-handshakes = 0
-for row in graph:
-    for i in row:
-        handshakes += i
-
-print(f"Всего было произведено {handshakes} рукопожатя(ий)")
+s= int(input('От какой вершины идти: '))
+cost, path = dijkstra(g,s)
+print(cost)
+print(*path, sep='\n')
